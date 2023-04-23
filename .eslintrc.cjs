@@ -18,9 +18,11 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
     project: './tsconfig.json',
+    tsconfigRootDir: './',
   },
   plugins: ['react', '@typescript-eslint', 'prettier'],
   rules: {
     'react/react-in-jsx-scope': 0,
+    'import/extensions': 0,
   },
 };
