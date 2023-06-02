@@ -6,6 +6,7 @@ type Props = {
 
 function Tile({ i, j, image }: Props) {
   let tileColor = '';
+  let tileStyle;
 
   if ((i + j) % 2 === 0) {
     tileColor = 'black';
@@ -13,14 +14,26 @@ function Tile({ i, j, image }: Props) {
     tileColor = 'white';
   }
 
+  if (image) {
+    tileStyle = {
+      backgroundImage: `url(${image})`,
+      backgroundSize: 'contain', // or 'contain',
+    };
+  }
+
   return (
-    <span
+    <div
       className={`h-[75px] w-[75px] ${
         tileColor === 'white' ? 'bg-[#ebecd0]' : 'bg-[#779556]'
-      }`}
+      } `}
     >
-      {image ? <img src={image} alt="Piece" /> : ''}
-    </span>
+      <div
+        className={`h-[75px] w-[75px] ${
+          image ? 'cursor-grab active:cursor-grabbing piece' : ''
+        }`}
+        style={tileStyle}
+      />
+    </div>
   );
 }
 
