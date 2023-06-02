@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Piece } from '@/@types';
 import Pieces from '@/@types/pieces';
 import Tile from '@/components/Tile';
@@ -38,10 +38,11 @@ for (let i = 0; i < 8; i += 1) {
 }
 
 function ChessBoard() {
-  const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
+  const [activePiece, setActivePiece] = useState<HTMLDivElement | null>(null);
+  const chessboardRef = useRef<HTMLDivElement>(null);
 
   function grabPiece(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    const element = e.target as HTMLElement;
+    const element = e.target as HTMLDivElement;
     if (element.classList.contains('piece')) {
       const x = e.clientX - 37.5;
       const y = e.clientY - 37.5;
@@ -53,16 +54,35 @@ function ChessBoard() {
   }
 
   function movePiece(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    if (activePiece) {
+    const chessboard = chessboardRef.current;
+    if (activePiece && chessboard) {
+      const minX = chessboard.offsetLeft;
+      const minY = chessboard.offsetTop;
+      const maxX = chessboard.offsetLeft + chessboard.clientWidth;
+      const maxY = chessboard.offsetTop + chessboard.clientHeight;
       const x = e.clientX - 37.5;
       const y = e.clientY - 37.5;
       activePiece.style.position = 'absolute';
-      activePiece.style.left = `${x}px`;
-      activePiece.style.top = `${y}px`;
+
+      if (x < minX) {
+        activePiece.style.left = `${minX}px`;
+      } else if (x > maxX) {
+        activePiece.style.left = `${maxX}px`;
+      } else {
+        activePiece.style.left = `${x}px`;
+      }
+
+      if (y < minY) {
+        activePiece.style.top = `${minY}px`;
+      } else if (y > maxY) {
+        activePiece.style.top = `${maxY}px`;
+      } else {
+        activePiece.style.top = `${y}px`;
+      }
     }
   }
 
-  function dropPiece(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+  function dropPiece() {
     if (activePiece) {
       setActivePiece(null);
     }
@@ -90,7 +110,8 @@ function ChessBoard() {
       className="grid grid-cols-8 grid-rows-[8] bg-[#779556] w-[600px] h-[600px]"
       onMouseDown={(e) => grabPiece(e)}
       onMouseMove={(e) => movePiece(e)}
-      onMouseUp={(e) => dropPiece(e)}
+      onMouseUp={() => dropPiece()}
+      ref={chessboardRef}
     >
       {board}
     </div>
