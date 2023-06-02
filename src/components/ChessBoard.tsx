@@ -7,40 +7,35 @@ const verticalAxis = ['1', '2', '3', '4', '5', '6', '7', '8'];
 
 const pieces: Piece[] = [];
 
+for (let p = 0; p < 2; p += 1) {
+  const type = p === 0 ? 'black' : 'white';
+  const y = p === 0 ? 7 : 0;
+  console.log(p);
+
+  pieces.push({ image: Pieces[`${type}Castle`], x: 0, y });
+  pieces.push({ image: Pieces[`${type}Castle`], x: 7, y });
+
+  pieces.push({ image: Pieces[`${type}Knight`], x: 1, y });
+  pieces.push({ image: Pieces[`${type}Knight`], x: 6, y });
+
+  pieces.push({ image: Pieces[`${type}Bishop`], x: 2, y });
+  pieces.push({ image: Pieces[`${type}Bishop`], x: 5, y });
+
+  pieces.push({ image: Pieces[`${type}Queen`], x: 3, y });
+  pieces.push({ image: Pieces[`${type}King`], x: 4, y });
+}
+
 // Black Pieces definition
+
 for (let i = 0; i < 8; i += 1) {
   pieces.push({ image: Pieces.blackPawn, x: i, y: 6 });
 }
-
-pieces.push({ image: Pieces.blackCastle, x: 0, y: 7 });
-pieces.push({ image: Pieces.blackCastle, x: 7, y: 7 });
-
-pieces.push({ image: Pieces.blackKnight, x: 1, y: 7 });
-pieces.push({ image: Pieces.blackKnight, x: 6, y: 7 });
-
-pieces.push({ image: Pieces.blackBishop, x: 2, y: 7 });
-pieces.push({ image: Pieces.blackBishop, x: 5, y: 7 });
-
-pieces.push({ image: Pieces.blackQueen, x: 3, y: 7 });
-pieces.push({ image: Pieces.blackKing, x: 4, y: 7 });
 
 // White pieces definition
 
 for (let i = 0; i < 8; i += 1) {
   pieces.push({ image: Pieces.whitePawn, x: i, y: 1 });
 }
-
-pieces.push({ image: Pieces.whiteCastle, x: 0, y: 0 });
-pieces.push({ image: Pieces.whiteCastle, x: 7, y: 0 });
-
-pieces.push({ image: Pieces.whiteKnight, x: 1, y: 0 });
-pieces.push({ image: Pieces.whiteKnight, x: 6, y: 0 });
-
-pieces.push({ image: Pieces.whiteBishop, x: 2, y: 0 });
-pieces.push({ image: Pieces.whiteBishop, x: 5, y: 0 });
-
-pieces.push({ image: Pieces.whiteQueen, x: 3, y: 0 });
-pieces.push({ image: Pieces.whiteKing, x: 4, y: 0 });
 
 function ChessBoard() {
   const board = [];
