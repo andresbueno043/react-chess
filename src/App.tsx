@@ -1,25 +1,9 @@
-import { HashRouter, Route, Routes } from 'react-router-dom';
-import Home from '@/pages/Home';
-import NotFound from '@/pages/NotFound';
-import Layout from '@/components/Layout';
+import ChessBoard from '@/components/ChessBoard';
 
-export function App() {
+export default function App() {
   return (
-    <div>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+    <div className="grid place-content-center h-screen bg-[#202020]">
+      <ChessBoard />
     </div>
-  );
-}
-
-export function WrappedApp() {
-  return (
-    <HashRouter>
-      <Layout>
-        <App />
-      </Layout>
-    </HashRouter>
   );
 }
