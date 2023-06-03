@@ -1,4 +1,4 @@
-enum Pieces {
+export enum Pieces {
   blackPawn = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Chess_pdt45.svg/800px-Chess_pdt45.svg.png',
   blackCastle = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Chess_rdt45.svg/800px-Chess_rdt45.svg.png',
   blackKnight = 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Chess_ndt45.svg/800px-Chess_ndt45.svg.png',
@@ -13,4 +13,16 @@ enum Pieces {
   whiteQueen = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Chess_qlt45.svg/800px-Chess_qlt45.svg.png',
 }
 
-export default Pieces;
+export enum PieceType {
+  KING,
+  QUEEN,
+  CASTLE,
+  KNIGHT,
+  BISHOP,
+  PAWN,
+}
+
+export enum TeamType {
+  OPONENT,
+  PLAYER,
+}

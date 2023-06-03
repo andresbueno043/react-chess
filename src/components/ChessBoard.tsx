@@ -1,7 +1,9 @@
+/* eslint-disable no-else-return */
 import React, { useEffect, useRef, useState } from 'react';
 import { Piece } from '@/@types';
-import Pieces from '@/@types/pieces';
+import { PieceType, Pieces, TeamType } from '@/@types/pieces';
 import Tile from '@/components/Tile';
+import Referee from '@/utils/referee/referee';
 
 const horizontalAxis = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const verticalAxis = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -9,40 +11,104 @@ const verticalAxis = ['1', '2', '3', '4', '5', '6', '7', '8'];
 const initialBoardState: Piece[] = [];
 
 for (let p = 0; p < 2; p += 1) {
+  const team = p === 0 ? TeamType.OPONENT : TeamType.PLAYER;
   const type = p === 0 ? 'black' : 'white';
   const y = p === 0 ? 7 : 0;
 
-  initialBoardState.push({ image: Pieces[`${type}Castle`], x: 0, y });
-  initialBoardState.push({ image: Pieces[`${type}Castle`], x: 7, y });
+  initialBoardState.push({
+    image: Pieces[`${type}Castle`],
+    x: 0,
+    y,
+    type: PieceType.CASTLE,
+    team,
+  });
+  initialBoardState.push({
+    image: Pieces[`${type}Castle`],
+    x: 7,
+    y,
+    type: PieceType.CASTLE,
+    team,
+  });
 
-  initialBoardState.push({ image: Pieces[`${type}Knight`], x: 1, y });
-  initialBoardState.push({ image: Pieces[`${type}Knight`], x: 6, y });
+  initialBoardState.push({
+    image: Pieces[`${type}Knight`],
+    x: 1,
+    y,
+    type: PieceType.KNIGHT,
+    team,
+  });
+  initialBoardState.push({
+    image: Pieces[`${type}Knight`],
+    x: 6,
+    y,
+    type: PieceType.KNIGHT,
+    team,
+  });
 
-  initialBoardState.push({ image: Pieces[`${type}Bishop`], x: 2, y });
-  initialBoardState.push({ image: Pieces[`${type}Bishop`], x: 5, y });
+  initialBoardState.push({
+    image: Pieces[`${type}Bishop`],
+    x: 2,
+    y,
+    type: PieceType.BISHOP,
+    team,
+  });
+  initialBoardState.push({
+    image: Pieces[`${type}Bishop`],
+    x: 5,
+    y,
+    type: PieceType.BISHOP,
+    team,
+  });
 
-  initialBoardState.push({ image: Pieces[`${type}Queen`], x: 3, y });
-  initialBoardState.push({ image: Pieces[`${type}King`], x: 4, y });
+  initialBoardState.push({
+    image: Pieces[`${type}Queen`],
+    x: 3,
+    y,
+    type: PieceType.QUEEN,
+    team,
+  });
+  initialBoardState.push({
+    image: Pieces[`${type}King`],
+    x: 4,
+    y,
+    type: PieceType.KING,
+    team,
+  });
 }
 
 // Black Pieces definition
 
 for (let i = 0; i < 8; i += 1) {
-  initialBoardState.push({ image: Pieces.blackPawn, x: i, y: 6 });
+  initialBoardState.push({
+    image: Pieces.blackPawn,
+    x: i,
+    y: 6,
+    type: PieceType.PAWN,
+    team: TeamType.OPONENT,
+  });
 }
 
 // White Pieces definition
 
 for (let i = 0; i < 8; i += 1) {
-  initialBoardState.push({ image: Pieces.whitePawn, x: i, y: 1 });
+  initialBoardState.push({
+    image: Pieces.whitePawn,
+    x: i,
+    y: 1,
+    type: PieceType.PAWN,
+    team: TeamType.PLAYER,
+  });
 }
 
 function ChessBoard() {
+  const tileWidth = 600 / 8;
+  const tileHeight = 600 / 8;
   const [gridX, setGridX] = useState(0);
   const [gridY, setGridY] = useState(0);
   const [pieces, setPieces] = useState<Piece[]>(initialBoardState);
   const [activePiece, setActivePiece] = useState<HTMLDivElement | null>(null);
   const chessboardRef = useRef<HTMLDivElement>(null);
+  const referee = new Referee();
 
   useEffect(() => {}, [pieces]);
 
@@ -54,8 +120,8 @@ function ChessBoard() {
       setGridY(
         Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 600) / 75))
       );
-      const x = e.clientX - 37.5;
-      const y = e.clientY - 37.5;
+      const x = e.clientX - tileWidth / 2;
+      const y = e.clientY - tileHeight / 2;
       element.style.position = 'absolute';
       element.style.left = `${x}px`;
       element.style.top = `${y}px`;
@@ -70,8 +136,8 @@ function ChessBoard() {
       const minY = chessboard.offsetTop;
       const maxX = chessboard.offsetLeft + chessboard.clientWidth;
       const maxY = chessboard.offsetTop + chessboard.clientHeight;
-      const x = e.clientX - 37.5;
-      const y = e.clientY - 37.5;
+      const x = e.clientX - tileWidth / 2;
+      const y = e.clientY - tileHeight / 2;
       activePiece.style.position = 'absolute';
 
       if (x < minX) {
@@ -100,10 +166,26 @@ function ChessBoard() {
       const y = Math.abs(
         Math.ceil((e.clientY - chessboard.offsetTop - 600) / 75)
       );
+
+      // Updates the piece position
       setPieces((value) => {
         const tempPieces = value.map((p) => {
           if (p.x === gridX && p.y === gridY) {
-            return { ...p, x, y };
+            const validMove = referee.isValidMove(
+              gridX,
+              gridY,
+              x,
+              y,
+              p.type,
+              p.team
+            );
+            if (validMove) {
+              return { ...p, x, y };
+            } else {
+              activePiece.style.position = 'relative';
+              activePiece.style.removeProperty('left');
+              activePiece.style.removeProperty('top');
+            }
           }
           return p;
         });
